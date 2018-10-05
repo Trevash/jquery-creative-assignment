@@ -1,13 +1,121 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Jquery Creative Assignment</title>
-        <script type="text/javascript">
 
-        </script>
-    </head>
+<head>
+    <title>Jquery Creative Assignment</title>
 
-    <body>
-        <h1>Jquery Creative Assignment</h1>
-    </body>
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            let countries = [];
+            let selectedSearchType = "name";
+            $.ajax({
+                url: "https://restcountries.eu/rest/v2/all",
+                dataType: "json",
+                success: function(data) {
+                    countries = data;
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+            $("#countryField").keyup(function() {
+                let filteredCountries = [];
+
+                switch (selectedSearchType) {
+                    case "name":
+                        for (let i = 0; i < countries.length; i++) {
+                            if (countries[i].name.toUpperCase().includes($("#countryField").val().toUpperCase())) filteredCountries.push(countries[i]);
+                        }
+                        break;
+                    case "city":
+                        for (let i = 0; i < countries.length; i++) {
+                            if (countries[i].capital.toUpperCase().includes($("#countryField").val().toUpperCase())) filteredCountries.push(countries[i]);
+                        }
+                        break;
+                    case "language":
+                        for (let i = 0; i < countries.length; i++) {
+                            for (let j = 0; j < countries[i].languages.length; j++) {
+                                if (countries[i].languages[j].name.toUpperCase().includes($("#countryField").val().toUpperCase())) {
+                                    filteredCountries.push(countries[i]);
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                    case "currency":
+                        for (let i = 0; i < countries.length; i++) {
+                            for (let j = 0; j < countries[i].currencies.length; j++) {
+                                console.log(countries[i]);
+                                if (!countries[i].currencies[j].name) {}
+                                else if (countries[i].currencies[j].name.toUpperCase().includes($("#countryField").val().toUpperCase())) {
+                                    filteredCountries.push(countries[i]);
+                                    break;
+                                }
+                            }
+                        }
+                        break;
+                }
+
+                let displayedCountries = '<div class="row">';
+
+                for (let i = 0; i < filteredCountries.length; i++) {
+                    displayedCountries += '<div class="col-md-4" align="center"><div class="countryObj">';
+                    displayedCountries += '<img src="' + filteredCountries[i].flag + '" alt="No flag" width="300px" height="150px"><p><b>Name: ' +
+                        filteredCountries[i].name + '</b></p><p>Capital: ' + filteredCountries[i].capital + '</p>'
+                    displayedCountries += '</div></div>';
+                }
+                displayedCountries += "</div></div>"
+                $("#displayedCountries").html(displayedCountries);
+            });
+            $("#searchName").click(function() {
+                selectedSearchType = "name";
+                $("#dropDownButton").html('Name<span class="caret"></span>')
+            })
+            $("#searchCity").click(function() {
+                selectedSearchType = "city";
+                $("#dropDownButton").html('Capital City<span class="caret"></span>')
+            })
+            $("#searchLanguage").click(function() {
+                selectedSearchType = "language";
+                $("#dropDownButton").html('Language<span class="caret"></span>')
+            })
+            $("#searchCurrency").click(function() {
+                selectedSearchType = "currency";
+                $("#dropDownButton").html('Currency<span class="caret"></span>')
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container" id="headerInfo" align="center">
+            <h1>Country Search</h1>
+        </div>
+        <h4>Select search type</h4>
+        <div class="dropdown" id="myButton">
+            <button class="butn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="dropDownButton">Name<span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li><a id="searchName" href="#">Name</a></li>
+                <li><a id="searchCity" href="#">Capital City</a></li>
+                <li><a id="searchLanguage" href="#">Language</a></li>
+                <li><a id="searchCurrency" href="#">Currency</a></li>
+            </ul>
+        </div>
+
+        <form>
+            Search for a country: <input type="text" id="countryField" value=""><br>
+        </form>
+    </div>
+    <div class="container" id="CountryData">
+        <span id="displayedCountries"></span>
+    </div>
+</body>
+
 </html>

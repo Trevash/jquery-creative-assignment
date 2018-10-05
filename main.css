@@ -1,0 +1,13 @@
+body {
+    background-image: url("map.jpg");
+}
+
+.countryObj {
+    margin: 5px;
+    background-color: #E5C69A;
+    color: #946A38;
+}
+
+#myButton {
+    padding-bottom: 10px;
+}
